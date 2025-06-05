@@ -1,7 +1,8 @@
 import { APP_CONSTANTS } from '@constants/index';
-import type { TOTPEntry } from '@types/index';
+import { HashAlgorithms } from '@otplib/core';
 import { authenticator } from 'otplib';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { TOTPEntry } from '../types';
 
 export const useTOTP = (entry: TOTPEntry) => {
   const [code, setCode] = useState<string>('');
@@ -9,11 +10,14 @@ export const useTOTP = (entry: TOTPEntry) => {
 
   const generateTOTP = useCallback(() => {
     try {
-      const token = authenticator.generate(entry.secret, {
-        algorithm: entry.algorithm || APP_CONSTANTS.TOTP_DEFAULTS.algorithm,
+      authenticator.options = {
+        algorithm: entry.algorithm === 'SHA1' ? HashAlgorithms.SHA1 :
+          entry.algorithm === 'SHA256' ? HashAlgorithms.SHA256 :
+            HashAlgorithms.SHA512,
         digits: entry.digits || APP_CONSTANTS.TOTP_DEFAULTS.digits,
         period: entry.period || APP_CONSTANTS.TOTP_DEFAULTS.period
-      });
+      };
+      const token = authenticator.generate(entry.secret);
       setCode(token);
     } catch (error) {
       console.error('Error generating TOTP:', error);

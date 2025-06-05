@@ -1,7 +1,7 @@
 import { StorageService } from '@services/storage';
-import type { AuthState } from '@types/index';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useCallback, useEffect, useState } from 'react';
+import type { AuthState } from '../types';
 
 interface UseAuthReturn {
   isAuthenticated: boolean;
