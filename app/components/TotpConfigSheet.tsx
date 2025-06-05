@@ -1,7 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Pressable, Picker } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useForm } from 'react-hook-form';
 import { TotpDefaultConfigs } from '../../src/utils/totp_default_config';
 
 interface TotpConfigForm {

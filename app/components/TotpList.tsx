@@ -2,8 +2,6 @@ import { View, Text, FlatList, StyleSheet, Pressable, TouchableOpacity, useRef, 
 import { totp } from 'otplib';
 import { ProgressBar } from 'react-native-progress';
 import { useTranslation } from 'react-i18next';
-import { ProgressBar } from 'react-native-progress';
-import { useTranslation } from 'react-i18next';
 
 interface TotpConfig {
   id: string;

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
-import TotpList from './components/TotpList';
-import TotpConfigSheet from './components/TotpConfigSheet';
 import { useMMKVStorage } from 'react-native-mmkv';
 import { v4 as uuidv4 } from 'uuid';
+import TotpConfigSheet from './components/TotpConfigSheet';
+import TotpList from './components/TotpList';
 
 const HomeScreen = () => {
   const [configs, setConfigs] = useMMKVStorage('totpConfigs', '', 'totpStorage');
