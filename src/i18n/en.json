@@ -1,0 +1,18 @@
+{
+  "totpConfig": {
+    "title": "TOTP Configuration",
+    "preset": "Preset",
+    "name": "Name",
+    "secret": "Secret",
+    "algorithm": "Algorithm",
+    "digits": "Digits",
+    "period": "Period (seconds)",
+    "confirm": "Confirm"
+  },
+  "totpList": {
+    "add": "Add Config",
+    "running": "Running",
+    "stop": "Stop",
+    "otp": "OTP"
+  }
+}

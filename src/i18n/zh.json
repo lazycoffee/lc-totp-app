@@ -1,0 +1,18 @@
+{
+  "totpConfig": {
+    "title": "TOTP配置",
+    "preset": "预设配置",
+    "name": "配置名称",
+    "secret": "密钥",
+    "algorithm": "算法",
+    "digits": "OPT位数",
+    "period": "时间窗口（秒）",
+    "confirm": "确定"
+  },
+  "totpList": {
+    "add": "添加配置",
+    "running": "运行中",
+    "stop": "停止",
+    "otp": "动态密码"
+  }
+}
