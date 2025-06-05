@@ -1,13 +1,16 @@
-import { View, Text, FlatList, StyleSheet, Pressable, TouchableOpacity, useRef, useEffect } from 'react-native';
+import { HashAlgorithms } from '@otplib/core';
 import { totp } from 'otplib';
-import { ProgressBar } from 'react-native-progress';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Progress from 'react-native-progress';
 
-interface TotpConfig {
+export interface TotpConfig {
+  progress?: number;
   id: string;
   name: string;
   secret: string;
-  algorithm: 'SHA-1' | 'SHA-256' | 'SHA-512';
+  algorithm: HashAlgorithms;
   digits: number;
   period: number;
   isRunning?: boolean;
@@ -17,51 +20,59 @@ interface TotpConfig {
 interface TotpListProps {
   configs: TotpConfig[];
   onAddConfig: () => void;
-  onEditConfig: (config: TotpConfig) => void;
+  onEditConfig: (config: TotpConfig[]) => void;
 }
 
 const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
   const { t } = useTranslation();
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (configs.some(c => c.isRunning)) {
-      timerRef.current = setInterval(() => {
-        setConfigs(prevConfigs => prevConfigs.map(config => {
+      timerRef.current = window.setInterval(() => {
+        const updatedConfigs = configs.map(config => {
           if (!config.isRunning) return config;
           const now = Date.now();
           const timeElapsed = now % (config.period * 1000);
           const progress = timeElapsed / (config.period * 1000);
-          const otp = totp.generate(config.secret, {
-            algorithm: config.algorithm,
+          totp.options = {
+            algorithm: config.algorithm as HashAlgorithms,
             digits: config.digits,
             step: config.period
-          });
+          };
+          const otp = totp.generate(config.secret);
           return { ...config, otpCode: otp, progress };
-        }));
+        });
+        onEditConfig(updatedConfigs);
       }, 1000);
     } else {
-      clearInterval(timerRef.current);
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+      }
     }
-    return () => clearInterval(timerRef.current);
+    return () => {
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+      }
+    };
   }, [configs]);
 
   const renderItem = ({ item }: { item: TotpConfig }) => (
-    <TouchableOpacity style={styles.listItem} onPress={() => onEditConfig(item)}>
+    <TouchableOpacity style={styles.listItem} onPress={() => onEditConfig([item])}>
       <Text style={styles.name}>{item.name}</Text>
       <View style={styles.controls}>
         <Pressable
           style={[styles.actionBtn, item.isRunning ? styles.stopBtn : styles.playBtn]}
           onPress={() => {
-            setConfigs(prev => prev.map(c => c.id === item.id ? { ...c, isRunning: !c.isRunning } : c));
+            onEditConfig(configs.map(c => c.id === item.id ? { ...c, isRunning: !c.isRunning } : c));
           }}
         >
           <Text style={styles.actionText}>{item.isRunning ? '■' : '▶'}</Text>
         </Pressable>
         {item.otpCode && <Text style={styles.otpCode}>{item.otpCode}</Text>}
       </View>
-      <ProgressBar
-        progress={0.5} // 需根据剩余时间动态计算
+      <Progress.Bar
+        progress={item.progress ?? 0}
         width={null}
         height={4}
         style={styles.progress}
@@ -92,7 +103,7 @@ const styles = StyleSheet.create({
     padding: 16
   },
   listContent: {
-    paddingBottom: 80 // 为浮动按钮留出空间
+    paddingBottom: 80
   },
   listItem: {
     backgroundColor: 'white',

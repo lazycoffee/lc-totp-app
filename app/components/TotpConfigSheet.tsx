@@ -1,9 +1,10 @@
-import { View, Text, TextInput, StyleSheet, Pressable, Picker } from 'react-native';
-import { Controller, useForm } from 'react-hook-form';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
+import { Picker } from '@react-native-picker/picker';
+import { Controller, useForm } from 'react-hook-form';
+import { Pressable, StyleSheet, Text, TextInput } from 'react-native';
 import { TotpDefaultConfigs } from '../../src/utils/totp_default_config';
 
-interface TotpConfigForm {
+export interface TotpConfigForm {
   preset: 'Google' | 'Microsoft' | 'GitHub' | 'Other';
   name: string;
   secret: string;
@@ -12,17 +13,29 @@ interface TotpConfigForm {
   period: number;
 }
 
-const TotpConfigSheet = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { control, handleSubmit, reset } = useForm<TotpConfigForm>({
+interface TotpConfigSheetProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialValues?: Partial<TotpConfigForm>;
+  onSave: (newConfig: TotpConfigForm) => void;
+}
+
+const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigSheetProps) => {
+  const safeInitialValues = initialValues ?? {};
+
+  const { control, handleSubmit, reset, watch, setValue } = useForm<TotpConfigForm>({
     defaultValues: {
       preset: 'Other',
       name: '',
       secret: '',
       algorithm: 'SHA-1',
       digits: 6,
-      period: 30
+      period: 30,
+      ...safeInitialValues
     }
   });
+
+  const formValues = watch();
 
   const onPresetChange = (preset: TotpConfigForm['preset']) => {
     if (preset !== 'Other' && TotpDefaultConfigs[preset]) {
@@ -36,11 +49,11 @@ const TotpConfigSheet = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
   };
 
   return (
-    <BottomSheetView isOpen={isOpen} onClose={onClose} style={styles.sheet}>
+    <BottomSheetView style={styles.sheet}>
       <Text style={styles.title}>TOTP 配置</Text>
       {/* 预设配置下拉框 */}
       <Picker
-        selectedValue={control.formState.values.preset}
+        selectedValue={formValues.preset}
         onValueChange={onPresetChange}
         style={styles.input}
       >
@@ -55,12 +68,14 @@ const TotpConfigSheet = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         control={control}
         name="name"
         rules={{ required: '配置名称必填', maxLength: { value: 60, message: '最多60个字符' } }}
-        render={({ field }) => (
+        render={({ field: { onChange, value, onBlur } }) => (
           <TextInput
-            {...field}
             placeholder="例如：Github 张三"
             style={styles.input}
             maxLength={60}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value}
           />
         )}
       />
@@ -70,19 +85,21 @@ const TotpConfigSheet = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         control={control}
         name="secret"
         rules={{ required: '密钥必填' }}
-        render={({ field }) => (
+        render={({ field: { onChange, value, onBlur } }) => (
           <TextInput
-            {...field}
             placeholder="请输入密钥"
             style={styles.input}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value}
           />
         )}
       />
 
       {/* 算法下拉框 */}
       <Picker
-        selectedValue={control.formState.values.algorithm}
-        onValueChange={(value) => control.setValue('algorithm', value)}
+        selectedValue={formValues.algorithm}
+        onValueChange={(value) => setValue('algorithm', value)}
         style={styles.input}
       >
         <Picker.Item label="SHA-1" value="SHA-1" />
@@ -95,12 +112,14 @@ const TotpConfigSheet = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         control={control}
         name="digits"
         rules={{ required: '位数必填', min: { value: 6, message: '最小6位' }, max: { value: 12, message: '最大12位' } }}
-        render={({ field }) => (
+        render={({ field: { onChange, value, onBlur } }) => (
           <TextInput
-            {...field}
             placeholder="6"
             style={styles.input}
             keyboardType="numeric"
+            onChangeText={(text) => onChange(Number(text))}
+            onBlur={onBlur}
+            value={value?.toString()}
           />
         )}
       />
@@ -110,50 +129,64 @@ const TotpConfigSheet = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         control={control}
         name="period"
         rules={{ required: '时间窗口必填', min: { value: 1, message: '最小1秒' } }}
-        render={({ field }) => (
+        render={({ field: { onChange, value, onBlur } }) => (
           <TextInput
-            {...field}
             placeholder="30"
             style={styles.input}
             keyboardType="numeric"
+            onChangeText={(text) => onChange(Number(text))}
+            onBlur={onBlur}
+            value={value?.toString()}
           />
         )}
       />
       {/* 添加表单验证错误提示 */}
-      {control.formState.errors.name && <Text style={styles.error}>{control.formState.errors.name.message}</Text>}
-      {control.formState.errors.secret && <Text style={styles.error}>{control.formState.errors.secret.message}</Text>}
-      {control.formState.errors.digits && <Text style={styles.error}>{control.formState.errors.digits.message}</Text>}
-      {control.formState.errors.period && <Text style={styles.error}>{control.formState.errors.period.message}</Text>}
-      <Pressable style={styles.confirmBtn} onPress={handleSubmit(() => {})}>
+      {control._formState.errors.name && <Text style={styles.error}>{control._formState.errors.name.message}</Text>}
+      {control._formState.errors.secret && <Text style={styles.error}>{control._formState.errors.secret.message}</Text>}
+      {control._formState.errors.digits && <Text style={styles.error}>{control._formState.errors.digits.message}</Text>}
+      {control._formState.errors.period && <Text style={styles.error}>{control._formState.errors.period.message}</Text>}
+      <Pressable style={styles.confirmBtn} onPress={handleSubmit(onSave)}>
         <Text style={styles.confirmText}>确定</Text>
       </Pressable>
     </BottomSheetView>
   );
 };
 
-export default TotpConfigSheet;
-
 const styles = StyleSheet.create({
   sheet: {
-    padding: 20,
+    padding: 16,
     backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 16
+    marginBottom: 16,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 12,
+  },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 8,
   },
   confirmBtn: {
-    marginTop: 20,
-    padding: 12,
     backgroundColor: '#007AFF',
+    padding: 12,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 16,
   },
   confirmText: {
     color: 'white',
-    fontSize: 16
-  }
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
+
+export default TotpConfigSheet;
+
