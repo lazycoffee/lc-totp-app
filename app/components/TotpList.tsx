@@ -29,7 +29,7 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
 
   useEffect(() => {
     if (configs.some(c => c.isRunning)) {
-      timerRef.current = window.setInterval(() => {
+      timerRef.current = setInterval(() => {
         const updatedConfigs = configs.map(config => {
           if (!config.isRunning) return config;
           const now = Date.now();
@@ -47,12 +47,12 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
       }, 1000);
     } else {
       if (timerRef.current) {
-        window.clearInterval(timerRef.current);
+        clearInterval(timerRef.current);
       }
     }
     return () => {
       if (timerRef.current) {
-        window.clearInterval(timerRef.current);
+        clearInterval(timerRef.current);
       }
     };
   }, [configs]);

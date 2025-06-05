@@ -1,6 +1,7 @@
 import { colors, spacing } from '@services/theme';
 import React from 'react';
 import {
+    Platform,
     StyleSheet,
     TouchableOpacity,
     TouchableOpacityProps,
@@ -40,13 +41,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: spacing.md,
     marginVertical: spacing.xs,
-    shadowColor: colors.light.text,
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.light.text,
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   }
 }); 
