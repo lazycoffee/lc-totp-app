@@ -288,6 +288,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '60%',
   },
   confirmText: {
     fontSize: 16,

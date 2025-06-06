@@ -5,7 +5,7 @@
       "label": "Name",
       "required": "Name is required",
       "maxLength": "Maximum 60 characters",
-      "placeholder": "e.g., Github John"
+      "placeholder": "e.g., John"
     },
     "serviceProvider": {
       "label": "Service Provider",

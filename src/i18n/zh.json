@@ -5,7 +5,7 @@
       "label": "配置名称",
       "required": "配置名称必填",
       "maxLength": "最多60个字符",
-      "placeholder": "例如：Github 张三"
+      "placeholder": "例如：张三"
     },
     "serviceProvider": {
       "label": "服务提供商",
