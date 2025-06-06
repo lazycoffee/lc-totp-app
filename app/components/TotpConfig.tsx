@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   pickerInput: {
-    height: 40,
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 16,
