@@ -1,33 +1,16 @@
-import { useTheme } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLanguageContext } from '../src/contexts/LanguageContext';
 import { useThemeContext } from '../src/contexts/ThemeContext';
+import { colors } from '../src/services/theme';
 
 type ThemeType = 'light' | 'dark' | 'system';
 
 export default function SettingsScreen() {
-  const { colors } = useTheme();
-  const { t, i18n } = useTranslation();
-  const { theme, setTheme } = useThemeContext();
+  const { t } = useTranslation();
+  const { theme, setTheme, isDarkMode } = useThemeContext();
   const { language, setLanguage } = useLanguageContext();
-
-  useEffect(() => {
-    console.log('Current language:', i18n.language);
-    console.log('Available resources:', i18n.options.resources);
-    console.log('Theme translations:', {
-      title: t('settings.theme.title'),
-      system: t('settings.theme.system'),
-      light: t('settings.theme.light'),
-      dark: t('settings.theme.dark'),
-    });
-    console.log('Language translations:', {
-      title: t('settings.language.title'),
-      en: t('settings.language.en'),
-      zh: t('settings.language.zh'),
-    });
-  }, [i18n.language, t]);
 
   const themeOptions: { value: ThemeType; label: string }[] = [
     { value: 'system', label: t('settings.theme.system') },
@@ -41,9 +24,9 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? colors.dark.background : colors.light.background }]}>
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>
           {t('settings.theme.title')}
         </Text>
         {themeOptions.map((option) => (
@@ -52,7 +35,11 @@ export default function SettingsScreen() {
             style={[
               styles.option,
               {
-                backgroundColor: theme === option.value ? colors.primary : colors.card,
+                backgroundColor: theme === option.value 
+                  ? (isDarkMode ? colors.dark.primary : colors.light.primary)
+                  : (isDarkMode ? colors.dark.card : colors.light.card),
+                borderColor: isDarkMode ? colors.dark.border : colors.light.border,
+                borderWidth: 1,
               },
             ]}
             onPress={() => setTheme(option.value)}
@@ -60,7 +47,12 @@ export default function SettingsScreen() {
             <Text
               style={[
                 styles.optionText,
-                { color: theme === option.value ? colors.background : colors.text },
+                { 
+                  color: theme === option.value 
+                    ? (isDarkMode ? colors.dark.background : colors.light.background)
+                    : (isDarkMode ? colors.dark.text : colors.light.text),
+                  fontWeight: theme === option.value ? '600' : '400',
+                },
               ]}
             >
               {option.label}
@@ -70,7 +62,7 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>
           {t('settings.language.title')}
         </Text>
         {languageOptions.map((option) => (
@@ -79,7 +71,11 @@ export default function SettingsScreen() {
             style={[
               styles.option,
               {
-                backgroundColor: language === option.value ? colors.primary : colors.card,
+                backgroundColor: language === option.value 
+                  ? (isDarkMode ? colors.dark.primary : colors.light.primary)
+                  : (isDarkMode ? colors.dark.card : colors.light.card),
+                borderColor: isDarkMode ? colors.dark.border : colors.light.border,
+                borderWidth: 1,
               },
             ]}
             onPress={() => setLanguage(option.value as 'en' | 'zh')}
@@ -87,7 +83,12 @@ export default function SettingsScreen() {
             <Text
               style={[
                 styles.optionText,
-                { color: language === option.value ? colors.background : colors.text },
+                { 
+                  color: language === option.value 
+                    ? (isDarkMode ? colors.dark.background : colors.light.background)
+                    : (isDarkMode ? colors.dark.text : colors.light.text),
+                  fontWeight: language === option.value ? '600' : '400',
+                },
               ]}
             >
               {option.label}
