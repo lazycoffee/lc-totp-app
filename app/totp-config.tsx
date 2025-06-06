@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { useTotp } from '../src/contexts/TotpContext';
 import { TotpConfigForm } from '../src/types/totp';
-import TotpConfigPage from './components/TotpConfigSheet';
+import TotpConfigPage from './components/TotpConfig';
 
 export default function TotpConfigScreen() {
   const { addConfig, updateConfig, configs } = useTotp();

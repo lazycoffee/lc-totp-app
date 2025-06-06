@@ -256,5 +256,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TotpConfigPage;
-
+export default TotpConfigPage; 
