@@ -82,12 +82,19 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={configs}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-      />
+      {configs.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>{t('totpList.empty.title')}</Text>
+          <Text style={styles.emptySubText}>{t('totpList.empty.subtitle')}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={configs}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
       <Pressable style={styles.addBtn} onPress={onAddConfig}>
         <Text style={styles.addBtnText}>+</Text>
       </Pressable>
@@ -165,5 +172,21 @@ const styles = StyleSheet.create({
   addBtnText: {
     color: 'white',
     fontSize: 28
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 8
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#999'
   }
 });

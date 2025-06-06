@@ -13,6 +13,10 @@
     "add": "添加配置",
     "running": "运行中",
     "stop": "停止",
-    "otp": "动态密码"
+    "otp": "动态密码",
+    "empty": {
+      "title": "暂无TOTP配置",
+      "subtitle": "点击 + 按钮添加"
+    }
   }
 }

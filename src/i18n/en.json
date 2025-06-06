@@ -13,6 +13,10 @@
     "add": "Add Config",
     "running": "Running",
     "stop": "Stop",
-    "otp": "OTP"
+    "otp": "OTP",
+    "empty": {
+      "title": "No TOTP configurations yet",
+      "subtitle": "Tap the + button to add one"
+    }
   }
 }
