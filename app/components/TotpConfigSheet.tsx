@@ -81,6 +81,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
       <BottomSheetView style={styles.sheet}>
         <Text style={styles.title}>{t('totpConfig.title')}</Text>
         {/* 预设配置下拉框 */}
+        <Text style={styles.label}>{t('totpConfig.preset')}</Text>
         <Picker
           selectedValue={formValues.preset}
           onValueChange={onPresetChange}
@@ -93,6 +94,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         </Picker>
 
         {/* 配置名称输入框 */}
+        <Text style={styles.label}>{t('totpConfig.name.label')}</Text>
         <Controller
           control={control}
           name="name"
@@ -110,6 +112,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         />
 
         {/* 密钥输入框 */}
+        <Text style={styles.label}>{t('totpConfig.secret.label')}</Text>
         <Controller
           control={control}
           name="secret"
@@ -126,6 +129,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         />
 
         {/* 算法下拉框 */}
+        <Text style={styles.label}>{t('totpConfig.algorithm')}</Text>
         <Picker
           selectedValue={formValues.algorithm}
           onValueChange={(value) => setValue('algorithm', value)}
@@ -137,6 +141,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         </Picker>
 
         {/* OPT位数输入框 */}
+        <Text style={styles.label}>{t('totpConfig.digits.label')}</Text>
         <Controller
           control={control}
           name="digits"
@@ -154,6 +159,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         />
 
         {/* 时间窗口输入框 */}
+        <Text style={styles.label}>{t('totpConfig.period.label')}</Text>
         <Controller
           control={control}
           name="period"
@@ -191,6 +197,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+    marginBottom: 4,
   },
   input: {
     borderWidth: 1,

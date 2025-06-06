@@ -1,23 +1,27 @@
 {
   "totpConfig": {
     "title": "TOTP Configuration",
-    "preset": "Other",
+    "preset": "Preset",
     "name": {
+      "label": "Name",
       "required": "Name is required",
       "maxLength": "Maximum 60 characters",
       "placeholder": "e.g., Github John"
     },
     "secret": {
+      "label": "Secret Key",
       "required": "Secret is required",
       "placeholder": "Enter secret key"
     },
     "algorithm": "Algorithm",
     "digits": {
+      "label": "Digits",
       "required": "Digits is required",
       "min": "Minimum 6 digits",
       "max": "Maximum 12 digits"
     },
     "period": {
+      "label": "Time Window (seconds)",
       "required": "Period is required",
       "min": "Minimum 1 second"
     },
