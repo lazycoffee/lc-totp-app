@@ -1,4 +1,5 @@
 export const APP_CONSTANTS = {
+  SAMPLE: 'sample',
   STORAGE_KEYS: {
     ENTRIES: '@totp_entries',
     SETTINGS: '@totp_settings',

@@ -1,7 +1,7 @@
-import { APP_CONSTANTS } from '@constants/index';
 import { HashAlgorithms } from '@otplib/core';
 import { authenticator } from 'otplib';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { APP_CONSTANTS } from '../constants/index';
 import type { TOTPEntry } from '../types';
 
 export const useTOTP = (entry: TOTPEntry) => {

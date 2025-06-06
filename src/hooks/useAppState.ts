@@ -1,7 +1,7 @@
-import { APP_CONSTANTS } from '@constants/index';
 import { StorageService } from '@services/storage';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
+import { APP_CONSTANTS } from '../constants/index';
 import type { AppSettings, TOTPEntry } from '../types';
 
 interface UseAppStateReturn {

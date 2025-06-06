@@ -1,12 +1,26 @@
 {
   "totpConfig": {
     "title": "TOTP配置",
-    "preset": "预设配置",
-    "name": "配置名称",
-    "secret": "密钥",
+    "preset": "其他",
+    "name": {
+      "required": "配置名称必填",
+      "maxLength": "最多60个字符",
+      "placeholder": "例如：Github 张三"
+    },
+    "secret": {
+      "required": "密钥必填",
+      "placeholder": "请输入密钥"
+    },
     "algorithm": "算法",
-    "digits": "OPT位数",
-    "period": "时间窗口（秒）",
+    "digits": {
+      "required": "位数必填",
+      "min": "最小6位",
+      "max": "最大12位"
+    },
+    "period": {
+      "required": "时间窗口必填",
+      "min": "最小1秒"
+    },
     "confirm": "确定"
   },
   "totpList": {

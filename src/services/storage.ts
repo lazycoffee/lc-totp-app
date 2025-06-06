@@ -1,6 +1,6 @@
 import type { AppSettings, AuthState, TOTPEntry } from '@/types/index';
-import { APP_CONSTANTS } from '@constants/index';
 import { MMKV } from 'react-native-mmkv';
+import { APP_CONSTANTS } from '../constants/index';
 
 const storage = new MMKV();
 

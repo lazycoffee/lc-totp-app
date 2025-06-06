@@ -5,28 +5,20 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@hooks/*": ["src/hooks/*"],
       "@services/*": ["src/services/*"],
-      "@store/*": ["src/store/*"],
-      "@types/*": ["src/types/*"],
-      "@constants/*": ["src/constants/*"],
-      "@config/*": ["src/config/*"],
-      "@assets/*": ["src/assets/*"],
-      "@styles/*": ["src/styles/*"]
+      "@components/*": ["src/components/*"],
+      "@contexts/*": ["src/contexts/*"]
     },
-    "types": ["react-native"],
-    "allowJs": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "isolatedModules": true,
     "jsx": "react-native",
-    "lib": ["es2017"],
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "lib": ["dom", "esnext"],
     "noEmit": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "target": "esnext"
   },
   "include": [
     "**/*.ts",

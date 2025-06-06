@@ -2,6 +2,7 @@ import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Picker } from '@react-native-picker/picker';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, TextInput } from 'react-native';
 import { TotpDefaultConfigs } from '../../src/utils/totp_default_config';
 
@@ -22,6 +23,7 @@ interface TotpConfigSheetProps {
 }
 
 const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigSheetProps) => {
+  const { t } = useTranslation();
   const safeInitialValues = initialValues ?? {};
 
   // Add bottom sheet configuration
@@ -77,7 +79,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
       index={isOpen ? 0 : -1}
     >
       <BottomSheetView style={styles.sheet}>
-        <Text style={styles.title}>TOTP 配置</Text>
+        <Text style={styles.title}>{t('totpConfig.title')}</Text>
         {/* 预设配置下拉框 */}
         <Picker
           selectedValue={formValues.preset}
@@ -87,17 +89,17 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
           <Picker.Item label="Google" value="Google" />
           <Picker.Item label="Microsoft" value="Microsoft" />
           <Picker.Item label="GitHub" value="GitHub" />
-          <Picker.Item label="其他" value="Other" />
+          <Picker.Item label={t('totpConfig.preset')} value="Other" />
         </Picker>
 
         {/* 配置名称输入框 */}
         <Controller
           control={control}
           name="name"
-          rules={{ required: '配置名称必填', maxLength: { value: 60, message: '最多60个字符' } }}
+          rules={{ required: t('totpConfig.name.required'), maxLength: { value: 60, message: t('totpConfig.name.maxLength') } }}
           render={({ field: { onChange, value, onBlur } }) => (
             <TextInput
-              placeholder="例如：Github 张三"
+              placeholder={t('totpConfig.name.placeholder')}
               style={styles.input}
               maxLength={60}
               onChangeText={onChange}
@@ -111,10 +113,10 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         <Controller
           control={control}
           name="secret"
-          rules={{ required: '密钥必填' }}
+          rules={{ required: t('totpConfig.secret.required') }}
           render={({ field: { onChange, value, onBlur } }) => (
             <TextInput
-              placeholder="请输入密钥"
+              placeholder={t('totpConfig.secret.placeholder')}
               style={styles.input}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -138,7 +140,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         <Controller
           control={control}
           name="digits"
-          rules={{ required: '位数必填', min: { value: 6, message: '最小6位' }, max: { value: 12, message: '最大12位' } }}
+          rules={{ required: t('totpConfig.digits.required'), min: { value: 6, message: t('totpConfig.digits.min') }, max: { value: 12, message: t('totpConfig.digits.max') } }}
           render={({ field: { onChange, value, onBlur } }) => (
             <TextInput
               placeholder="6"
@@ -155,7 +157,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         <Controller
           control={control}
           name="period"
-          rules={{ required: '时间窗口必填', min: { value: 1, message: '最小1秒' } }}
+          rules={{ required: t('totpConfig.period.required'), min: { value: 1, message: t('totpConfig.period.min') } }}
           render={({ field: { onChange, value, onBlur } }) => (
             <TextInput
               placeholder="30"
@@ -173,7 +175,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
         {control._formState.errors.digits && <Text style={styles.error}>{control._formState.errors.digits.message}</Text>}
         {control._formState.errors.period && <Text style={styles.error}>{control._formState.errors.period.message}</Text>}
         <Pressable style={styles.confirmBtn} onPress={handleSubmit(onSave)}>
-          <Text style={styles.confirmText}>确定</Text>
+          <Text style={styles.confirmText}>{t('totpConfig.confirm')}</Text>
         </Pressable>
       </BottomSheetView>
     </BottomSheetModal>

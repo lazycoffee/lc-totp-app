@@ -1,22 +1,38 @@
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { Stack } from "expo-router";
-import '../src/i18n'; // Import i18n configuration
+import { LanguageProvider } from '../src/contexts/LanguageContext';
+import { ThemeProvider, useThemeContext } from '../src/contexts/ThemeContext';
+import '../src/i18n';
+
+function RootLayoutNav() {
+  const { isDarkMode } = useThemeContext();
+  const theme = isDarkMode ? DarkTheme : DefaultTheme;
+
+  return (
+    <Stack
+      screenOptions={{
+        headerTitle: "LazyCoffee TOTP",
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        headerTintColor: theme.colors.text,
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    />
+  );
+}
 
 export default function RootLayout() {
   return (
-    <BottomSheetModalProvider>
-      <Stack
-        screenOptions={{
-          headerTitle: "LazyCoffee TOTP",
-          headerStyle: {
-            backgroundColor: '#fff',
-          },
-          headerTintColor: '#000',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      />
-    </BottomSheetModalProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <BottomSheetModalProvider>
+          <RootLayoutNav />
+        </BottomSheetModalProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }
