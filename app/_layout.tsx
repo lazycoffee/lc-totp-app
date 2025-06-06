@@ -36,14 +36,14 @@ function RootLayoutNav() {
             <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
           </TouchableOpacity>
         ) : undefined,
-        headerRight: isSettingsPage ? undefined : () => (
+        headerRight: isHomePage ? () => (
           <TouchableOpacity
             onPress={() => router.push('/settings')}
             style={{ marginRight: 15 }}
           >
             <Ionicons name="settings-outline" size={24} color={theme.colors.text} />
           </TouchableOpacity>
-        ),
+        ) : undefined,
         animation: 'slide_from_right',
         presentation: 'card',
       }}
