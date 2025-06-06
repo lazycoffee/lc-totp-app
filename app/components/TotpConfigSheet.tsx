@@ -1,9 +1,8 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Picker } from '@react-native-picker/picker';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useRouter } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useThemeContext } from '../../src/contexts/ThemeContext';
 import { colors } from '../../src/services/theme';
 import { TotpDefaultConfigs } from '../../src/utils/totp_default_config';
@@ -17,34 +16,16 @@ export interface TotpConfigForm {
   period: number;
 }
 
-interface TotpConfigSheetProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface TotpConfigPageProps {
   initialValues?: Partial<TotpConfigForm>;
   onSave: (newConfig: TotpConfigForm) => void;
 }
 
-const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigSheetProps) => {
+const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
   const { t } = useTranslation();
   const { isDarkMode } = useThemeContext();
+  const router = useRouter();
   const safeInitialValues = initialValues ?? {};
-
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['100%'], []);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      onClose();
-    }
-  }, [onClose]);
-
-  useEffect(() => {
-    if (isOpen) {
-      bottomSheetRef.current?.present();
-    } else {
-      bottomSheetRef.current?.dismiss();
-    }
-  }, [isOpen]);
 
   const { control, handleSubmit, reset, watch, setValue } = useForm<TotpConfigForm>({
     defaultValues: {
@@ -72,27 +53,17 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
   };
 
   return (
-    <BottomSheetModal
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      onChange={handleSheetChanges}
-      enablePanDownToClose
-      index={isOpen ? 0 : -1}
-      backgroundStyle={[styles.modalBackground, { backgroundColor: isDarkMode ? colors.dark.card : colors.light.card }]}
-    >
-      <BottomSheetView style={[styles.sheet, { backgroundColor: isDarkMode ? colors.dark.card : colors.light.card }]}>
-        <View style={[styles.header, { borderBottomColor: isDarkMode ? colors.dark.border : colors.light.border }]}>
-          <Text style={[styles.title, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>{t('totpConfig.title')}</Text>
-          <Pressable onPress={onClose} style={styles.closeButton}>
-            <Text style={[styles.closeButtonText, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>×</Text>
-          </Pressable>
-        </View>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? colors.dark.card : colors.light.card }]}>
+      <View style={[styles.header, { borderBottomColor: isDarkMode ? colors.dark.border : colors.light.border }]}>
+        <Text style={[styles.title, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>{t('totpConfig.title')}</Text>
+      </View>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.content}>
           <Text style={[styles.label, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>{t('totpConfig.preset')}</Text>
           <Picker
             selectedValue={formValues.preset}
             onValueChange={onPresetChange}
-            style={[styles.input, { 
+            style={[styles.pickerInput, { 
               color: isDarkMode ? colors.dark.text : colors.light.text,
               backgroundColor: isDarkMode ? colors.dark.card : colors.light.card,
               borderColor: isDarkMode ? colors.dark.border : colors.light.border
@@ -151,7 +122,7 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
           <Picker
             selectedValue={formValues.algorithm}
             onValueChange={(value) => setValue('algorithm', value)}
-            style={[styles.input, { 
+            style={[styles.pickerInput, { 
               color: isDarkMode ? colors.dark.text : colors.light.text,
               backgroundColor: isDarkMode ? colors.dark.card : colors.light.card,
               borderColor: isDarkMode ? colors.dark.border : colors.light.border
@@ -210,24 +181,21 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
           {control._formState.errors.digits && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{control._formState.errors.digits.message}</Text>}
           {control._formState.errors.period && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{control._formState.errors.period.message}</Text>}
         </View>
-        <View style={[styles.footer, { borderTopColor: isDarkMode ? colors.dark.border : colors.light.border }]}>
-          <Pressable 
-            style={[styles.confirmBtn, { backgroundColor: isDarkMode ? colors.dark.primary : colors.light.primary }]} 
-            onPress={handleSubmit(onSave)}
-          >
-            <Text style={[styles.confirmText, { color: isDarkMode ? colors.dark.card : colors.light.card }]}>{t('totpConfig.confirm')}</Text>
-          </Pressable>
-        </View>
-      </BottomSheetView>
-    </BottomSheetModal>
+      </ScrollView>
+      <View style={[styles.footer, { borderTopColor: isDarkMode ? colors.dark.border : colors.light.border }]}>
+        <Pressable 
+          style={[styles.confirmBtn, { backgroundColor: isDarkMode ? colors.dark.primary : colors.light.primary }]} 
+          onPress={handleSubmit(onSave)}
+        >
+          <Text style={[styles.confirmText, { color: isDarkMode ? colors.dark.card : colors.light.card }]}>{t('totpConfig.confirm')}</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  modalBackground: {
-    backgroundColor: 'white',
-  },
-  sheet: {
+  container: {
     flex: 1,
     backgroundColor: 'white',
   },
@@ -238,53 +206,55 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
+  content: {
+    padding: 16,
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
   },
-  closeButton: {
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
   },
-  closeButtonText: {
-    fontSize: 24,
+  input: {
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 16,
   },
-  content: {
-    flex: 1,
-    padding: 16,
+  pickerInput: {
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  error: {
+    color: 'red',
+    marginBottom: 16,
   },
   footer: {
     padding: 16,
     borderTopWidth: 1,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 16,
-  },
-  error: {
-    fontSize: 12,
-    marginTop: -12,
-    marginBottom: 16,
-  },
   confirmBtn: {
-    padding: 12,
+    height: 48,
     borderRadius: 8,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   confirmText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 });
 
-export default TotpConfigSheet;
+export default TotpConfigPage;
 

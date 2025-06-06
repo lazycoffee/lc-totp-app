@@ -1,20 +1,26 @@
 import { HashAlgorithms } from '@otplib/core';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useTotp } from '../src/contexts/TotpContext';
 import { TotpConfig, TotpConfigForm } from '../src/types/totp';
-import TotpConfigSheet from './components/TotpConfigSheet';
 import TotpList from './components/TotpList';
 import './polyfills';
 
 const HomeScreen = () => {
   const { configs, addConfig, updateConfig, isLoading, error } = useTotp();
-  const [isConfigSheetOpen, setIsConfigSheetOpen] = useState(false);
+  const router = useRouter();
   const [editingConfigId, setEditingConfigId] = useState<string | undefined>(undefined);
 
   const handleAddConfig = (config?: TotpConfig) => {
-    setEditingConfigId(config?.id);
-    setIsConfigSheetOpen(true);
+    if (config) {
+      router.push({
+        pathname: '/totp-config',
+        params: { id: config.id }
+      });
+    } else {
+      router.push('/totp-config');
+    }
   };
 
   const handleSaveConfig = (newConfig: TotpConfigForm) => {
@@ -23,7 +29,7 @@ const HomeScreen = () => {
     } else {
       addConfig(newConfig);
     }
-    setIsConfigSheetOpen(false);
+    router.back();
   };
 
   const getInitialValues = (): Partial<TotpConfigForm> | undefined => {
@@ -54,12 +60,6 @@ const HomeScreen = () => {
   return (
     <View style={{ flex: 1 }}>
       <TotpList onAddConfig={handleAddConfig} />
-      <TotpConfigSheet
-        isOpen={isConfigSheetOpen}
-        onClose={() => setIsConfigSheetOpen(false)}
-        initialValues={getInitialValues()}
-        onSave={handleSaveConfig}
-      />
     </View>
   );
 };
