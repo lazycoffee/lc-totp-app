@@ -40,7 +40,17 @@
     "empty": {
       "title": "No TOTP configurations yet",
       "subtitle": "Tap the + button to add one"
+    },
+    "delete": {
+      "title": "Delete TOTP",
+      "message": "Are you sure you want to delete this TOTP configuration?",
+      "error": "Failed to delete TOTP configuration"
     }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "error": "Error"
   },
   "settings": {
     "theme": {

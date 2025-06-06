@@ -40,7 +40,17 @@
     "empty": {
       "title": "暂无TOTP配置",
       "subtitle": "点击 + 按钮添加"
+    },
+    "delete": {
+      "title": "删除TOTP",
+      "message": "确定要删除这个TOTP配置吗？",
+      "error": "删除TOTP配置失败"
     }
+  },
+  "common": {
+    "cancel": "取消",
+    "delete": "删除",
+    "error": "错误"
   },
   "settings": {
     "theme": {

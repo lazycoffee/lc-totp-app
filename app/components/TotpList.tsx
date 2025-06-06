@@ -15,7 +15,7 @@ interface TotpListProps {
 
 const TotpList = ({ onAddConfig }: TotpListProps) => {
   const { t } = useTranslation();
-  const { configs, updateConfig, updateConfigUI } = useTotp();
+  const { configs, updateConfig, updateConfigUI, deleteConfig } = useTotp();
   const { isDarkMode } = useThemeContext();
   const timerRef = useRef<number | null>(null);
 
@@ -70,6 +70,21 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
     }
   };
 
+  const handleDeletePress = (item: TotpConfig) => {
+    const confirmed = window.confirm(
+      t('totpList.delete.message')
+    );
+    
+    if (confirmed) {
+      try {
+        deleteConfig(item.id);
+      } catch (error) {
+        console.error('Error deleting TOTP:', error);
+        window.alert(t('totpList.delete.error'));
+      }
+    }
+  };
+
   const renderItem = ({ item }: { item: TotpConfig }) => (
     <View style={[styles.listItem, { backgroundColor: isDarkMode ? colors.dark.card : colors.light.card }]}>
       <TouchableOpacity 
@@ -85,6 +100,13 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
           onPress={() => handlePlayButtonPress(item)}
         >
           <Text style={styles.actionText}>{item.isRunning ? '■' : '▶'}</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.actionBtn, styles.deleteBtn]}
+          onPress={() => handleDeletePress(item)}
+          testID="delete-totp-button"
+        >
+          <Text style={styles.actionText}>×</Text>
         </Pressable>
       </View>
       <Progress.Bar
@@ -208,5 +230,8 @@ const styles = StyleSheet.create({
   },
   emptySubText: {
     fontSize: 14
+  },
+  deleteBtn: {
+    backgroundColor: '#FF3B30'
   }
 });
