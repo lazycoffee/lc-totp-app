@@ -1,12 +1,16 @@
 {
   "totpConfig": {
     "title": "TOTP Configuration",
-    "preset": "Preset",
     "name": {
       "label": "Name",
       "required": "Name is required",
       "maxLength": "Maximum 60 characters",
       "placeholder": "e.g., Github John"
+    },
+    "serviceProvider": {
+      "label": "Service Provider",
+      "placeholder": "e.g., Google",
+      "maxLength": "Maximum 30 characters"
     },
     "secret": {
       "label": "Secret Key",
@@ -25,7 +29,8 @@
       "required": "Period is required",
       "min": "Minimum 1 second"
     },
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "more": "More"
   },
   "totpList": {
     "add": "Add Config",

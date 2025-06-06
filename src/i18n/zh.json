@@ -1,12 +1,16 @@
 {
   "totpConfig": {
     "title": "TOTP配置",
-    "preset": "预设配置",
     "name": {
       "label": "配置名称",
       "required": "配置名称必填",
       "maxLength": "最多60个字符",
       "placeholder": "例如：Github 张三"
+    },
+    "serviceProvider": {
+      "label": "服务提供商",
+      "placeholder": "例如：Google",
+      "maxLength": "最多30个字符"
     },
     "secret": {
       "label": "密钥",
@@ -25,7 +29,8 @@
       "required": "时间窗口必填",
       "min": "最小1秒"
     },
-    "confirm": "确定"
+    "confirm": "确定",
+    "more": "更多"
   },
   "totpList": {
     "add": "添加配置",

@@ -6,14 +6,16 @@
 - **Layout Structure**:
   - Title Bar: "TOTP Configuration" (centered at top) with close button
   - Content Area (scrollable):
-    - Preset Configuration Dropdown (Options: Google/Microsoft/GitHub/Other)
-    - Configuration Name Input Field (placeholder: "e.g., Github John", max 60 characters)
+    - Configuration Name Input Field (placeholder: "e.g., Github John", max 60 characters, required)
+    - Service Provider Input Field (placeholder: "e.g., Google", max 30 characters, optional)
     - Secret Key Input Field (required, no format restrictions)
-    - Algorithm Dropdown (Options: SHA-1/SHA-256/SHA-512, default SHA-1)
-    - OTP Digits Input Field (numeric input, 6-12 digits, default 6)
-    - Time Window Input Field (numeric input, positive integer, default 30 seconds)
+    - Advanced Settings (initially hidden, shown when "More" button is clicked):
+      - Algorithm Dropdown (Options: SHA-1/SHA-256/SHA-512, default SHA-1)
+      - OTP Digits Input Field (numeric input, 6-12 digits, default 6)
+      - Time Window Input Field (numeric input, positive integer, default 30 seconds)
   - Bottom Action Bar (fixed):
-    - Confirm Button (validates form and saves on click)
+    - Left: "More" button (toggles advanced settings)
+    - Right: Confirm Button (validates form and saves on click)
 - **Interaction Behavior**:
   - Slides up from bottom on open
   - Can be dismissed by:
