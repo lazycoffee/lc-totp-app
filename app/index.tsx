@@ -1,3 +1,4 @@
+import { HashAlgorithms } from '@otplib/core';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useTotp } from '../src/contexts/TotpContext';
@@ -25,17 +26,18 @@ const HomeScreen = () => {
     setIsConfigSheetOpen(false);
   };
 
-  const getInitialValues = () => {
+  const getInitialValues = (): Partial<TotpConfigForm> | undefined => {
     if (!editingConfigId) return undefined;
     const config = configs.find(c => c.id === editingConfigId);
     if (!config) return undefined;
+    const algorithm = config.algorithm === HashAlgorithms.SHA1 ? 'SHA-1' :
+                     config.algorithm === HashAlgorithms.SHA256 ? 'SHA-256' :
+                     'SHA-512';
     return {
       preset: config.preset,
       name: config.name,
       secret: config.secret,
-      algorithm: config.algorithm === 'SHA1' ? 'SHA-1' :
-                config.algorithm === 'SHA256' ? 'SHA-256' :
-                'SHA-512',
+      algorithm: algorithm as 'SHA-1' | 'SHA-256' | 'SHA-512',
       digits: config.digits,
       period: config.period
     };

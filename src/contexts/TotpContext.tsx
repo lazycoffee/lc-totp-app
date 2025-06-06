@@ -2,6 +2,7 @@ import { HashAlgorithms } from '@otplib/core';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { StorageService } from '../services/storage';
+import { TOTPEntry } from '../types';
 import { TotpConfig, TotpConfigForm, TotpContextType } from '../types/totp';
 
 const TotpContext = createContext<TotpContextType | undefined>(undefined);
@@ -23,6 +24,31 @@ const formToConfig = (form: TotpConfigForm, id: string): TotpConfig => ({
     HashAlgorithms.SHA512
 });
 
+const entryToConfig = (entry: TOTPEntry): TotpConfig => ({
+  id: entry.id,
+  preset: 'Other',
+  name: entry.name,
+  secret: entry.secret,
+  algorithm: entry.algorithm === 'SHA1' ? HashAlgorithms.SHA1 :
+             entry.algorithm === 'SHA256' ? HashAlgorithms.SHA256 :
+             HashAlgorithms.SHA512,
+  digits: entry.digits ?? 6,
+  period: entry.period ?? 30
+});
+
+const configToEntry = (config: TotpConfig): TOTPEntry => ({
+  id: config.id,
+  name: config.name,
+  secret: config.secret,
+  algorithm: config.algorithm === HashAlgorithms.SHA1 ? 'SHA1' :
+             config.algorithm === HashAlgorithms.SHA256 ? 'SHA256' :
+             'SHA512',
+  digits: config.digits,
+  period: config.period,
+  createdAt: Date.now(),
+  updatedAt: Date.now()
+});
+
 export const TotpProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [configs, setConfigs] = useState<TotpConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +56,8 @@ export const TotpProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     try {
-      const storedConfigs = StorageService.getEntries();
-      setConfigs(storedConfigs);
+      const storedEntries = StorageService.getEntries();
+      setConfigs(storedEntries.map(entryToConfig));
     } catch (err) {
       setError('Failed to load TOTP configurations');
     } finally {
@@ -41,7 +67,7 @@ export const TotpProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const saveConfigs = useCallback((newConfigs: TotpConfig[]) => {
     try {
-      StorageService.saveEntries(newConfigs);
+      StorageService.saveEntries(newConfigs.map(configToEntry));
       setConfigs(newConfigs);
     } catch (err) {
       setError('Failed to save TOTP configurations');
@@ -50,7 +76,7 @@ export const TotpProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addConfig = useCallback((form: TotpConfigForm) => {
     const newConfig = formToConfig(form, uuidv4());
-    StorageService.addEntry(newConfig);
+    StorageService.addEntry(configToEntry(newConfig));
     setConfigs(prev => [...prev, newConfig]);
   }, []);
 
@@ -59,7 +85,7 @@ export const TotpProvider: React.FC<{ children: React.ReactNode }> = ({ children
       saveConfigs(idOrConfigs);
     } else if (form) {
       const updatedConfig = formToConfig(form, idOrConfigs);
-      StorageService.updateEntry(updatedConfig);
+      StorageService.updateEntry(configToEntry(updatedConfig));
       setConfigs(prev => prev.map(config => config.id === idOrConfigs ? updatedConfig : config));
     }
   }, [saveConfigs]);
@@ -69,13 +95,21 @@ export const TotpProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setConfigs(prev => prev.filter(config => config.id !== id));
   }, []);
 
+  // UI-only update (not persisted)
+  const updateConfigUI = useCallback((id: string, partial: Partial<TotpConfig>) => {
+    setConfigs(prev => prev.map(config =>
+      config.id === id ? { ...config, ...partial } : config
+    ));
+  }, []);
+
   const value = {
     configs,
     addConfig,
     updateConfig,
     deleteConfig,
     isLoading,
-    error
+    error,
+    updateConfigUI
   };
 
   return <TotpContext.Provider value={value}>{children}</TotpContext.Provider>;

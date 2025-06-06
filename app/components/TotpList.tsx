@@ -13,7 +13,7 @@ interface TotpListProps {
 
 const TotpList = ({ onAddConfig }: TotpListProps) => {
   const { t } = useTranslation();
-  const { configs, updateConfig } = useTotp();
+  const { configs, updateConfig, updateConfigUI } = useTotp();
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -40,7 +40,14 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
             return config;
           }
         });
-        updateConfig(updatedConfigs);
+        updatedConfigs.forEach(config => {
+          if (updateConfigUI) {
+            updateConfigUI(config.id, {
+              otpCode: config.otpCode,
+              progress: config.progress
+            });
+          }
+        });
       }, 1000);
     } else {
       if (timerRef.current) {
@@ -52,13 +59,12 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
         clearInterval(timerRef.current);
       }
     };
-  }, [configs, updateConfig]);
+  }, [configs, updateConfig, updateConfigUI]);
 
   const handlePlayButtonPress = (item: TotpConfig) => {
-    const updatedConfigs = configs.map(c => 
-      c.id === item.id ? { ...c, isRunning: !c.isRunning } : c
-    );
-    updateConfig(updatedConfigs);
+    if (updateConfigUI) {
+      updateConfigUI(item.id, { isRunning: !item.isRunning });
+    }
   };
 
   const renderItem = ({ item }: { item: TotpConfig }) => (

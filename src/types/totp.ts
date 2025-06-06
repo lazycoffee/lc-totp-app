@@ -26,5 +26,6 @@ export interface TotpContextType {
   deleteConfig: (id: string) => void;
   isLoading: boolean;
   error: string | null;
+  updateConfigUI: (id: string, partial: Partial<TotpConfig>) => void;
 } 
 
