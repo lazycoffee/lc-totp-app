@@ -2,7 +2,7 @@ import { HashAlgorithms } from '@otplib/core';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { useTotp } from '../src/contexts/TotpContext';
-import { TotpConfigForm } from '../src/types/totp';
+import { TotpConfig, TotpConfigForm } from '../src/types/totp';
 import TotpConfigSheet from './components/TotpConfigSheet';
 import TotpList from './components/TotpList';
 import './polyfills';
@@ -12,8 +12,8 @@ const HomeScreen = () => {
   const [isConfigSheetOpen, setIsConfigSheetOpen] = useState(false);
   const [editingConfigId, setEditingConfigId] = useState<string | undefined>(undefined);
 
-  const handleAddConfig = () => {
-    setEditingConfigId(undefined);
+  const handleAddConfig = (config?: TotpConfig) => {
+    setEditingConfigId(config?.id);
     setIsConfigSheetOpen(true);
   };
 

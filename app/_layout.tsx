@@ -3,6 +3,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { Stack, usePathname, useRouter } from "expo-router";
 import { TouchableOpacity } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LanguageProvider } from '../src/contexts/LanguageContext';
 import { ThemeProvider, useThemeContext } from '../src/contexts/ThemeContext';
 import { TotpProvider } from '../src/contexts/TotpContext';
@@ -49,14 +50,16 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <BottomSheetModalProvider>
-          <TotpProvider>
-            <RootLayoutNav />
-          </TotpProvider>
-        </BottomSheetModalProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <LanguageProvider>
+          <BottomSheetModalProvider>
+            <TotpProvider>
+              <RootLayoutNav />
+            </TotpProvider>
+          </BottomSheetModalProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

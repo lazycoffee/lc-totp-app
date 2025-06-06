@@ -10,7 +10,7 @@ import { colors } from '../../src/services/theme';
 import { TotpConfig } from '../../src/types/totp';
 
 interface TotpListProps {
-  onAddConfig: () => void;
+  onAddConfig: (config?: TotpConfig) => void;
 }
 
 const TotpList = ({ onAddConfig }: TotpListProps) => {
@@ -74,7 +74,7 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
     <View style={[styles.listItem, { backgroundColor: isDarkMode ? colors.dark.card : colors.light.card }]}>
       <TouchableOpacity 
         style={styles.nameContainer}
-        onPress={() => onAddConfig()}
+        onPress={() => onAddConfig(item)}
       >
         <Text style={[styles.name, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>{item.name}</Text>
       </TouchableOpacity>
@@ -115,7 +115,7 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
       )}
       <Pressable 
         style={[styles.addBtn, { backgroundColor: isDarkMode ? colors.dark.primary : colors.light.primary }]} 
-        onPress={onAddConfig}
+        onPress={() => onAddConfig()}
       >
         <Text style={styles.addBtnText}>+</Text>
       </Pressable>
