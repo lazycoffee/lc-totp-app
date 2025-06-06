@@ -4,27 +4,16 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Progress from 'react-native-progress';
-
-export interface TotpConfig {
-  progress?: number;
-  id: string;
-  name: string;
-  secret: string;
-  algorithm: HashAlgorithms;
-  digits: number;
-  period: number;
-  isRunning?: boolean;
-  otpCode?: string;
-}
+import { useTotp } from '../../src/contexts/TotpContext';
+import { TotpConfig } from '../../src/types/totp';
 
 interface TotpListProps {
-  configs: TotpConfig[];
   onAddConfig: () => void;
-  onEditConfig: (config: TotpConfig[]) => void;
 }
 
-const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
+const TotpList = ({ onAddConfig }: TotpListProps) => {
   const { t } = useTranslation();
+  const { configs, updateConfig } = useTotp();
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -51,7 +40,7 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
             return config;
           }
         });
-        onEditConfig(updatedConfigs);
+        updateConfig(updatedConfigs);
       }, 1000);
     } else {
       if (timerRef.current) {
@@ -63,20 +52,20 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
         clearInterval(timerRef.current);
       }
     };
-  }, [configs]);
+  }, [configs, updateConfig]);
 
   const handlePlayButtonPress = (item: TotpConfig) => {
     const updatedConfigs = configs.map(c => 
       c.id === item.id ? { ...c, isRunning: !c.isRunning } : c
     );
-    onEditConfig(updatedConfigs);
+    updateConfig(updatedConfigs);
   };
 
   const renderItem = ({ item }: { item: TotpConfig }) => (
     <View style={styles.listItem}>
       <TouchableOpacity 
         style={styles.nameContainer}
-        onPress={() => onEditConfig([item])}
+        onPress={() => onAddConfig()}
       >
         <Text style={styles.name}>{item.name}</Text>
       </TouchableOpacity>

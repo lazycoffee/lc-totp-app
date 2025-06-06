@@ -5,6 +5,7 @@ import { Stack, usePathname, useRouter } from "expo-router";
 import { TouchableOpacity } from 'react-native';
 import { LanguageProvider } from '../src/contexts/LanguageContext';
 import { ThemeProvider, useThemeContext } from '../src/contexts/ThemeContext';
+import { TotpProvider } from '../src/contexts/TotpContext';
 import '../src/i18n';
 
 function RootLayoutNav() {
@@ -51,7 +52,9 @@ export default function RootLayout() {
     <ThemeProvider>
       <LanguageProvider>
         <BottomSheetModalProvider>
-          <RootLayoutNav />
+          <TotpProvider>
+            <RootLayoutNav />
+          </TotpProvider>
         </BottomSheetModalProvider>
       </LanguageProvider>
     </ThemeProvider>
