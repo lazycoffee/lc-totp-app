@@ -15,6 +15,7 @@ function RootLayoutNav() {
   const router = useRouter();
   const pathname = usePathname();
   const isSettingsPage = pathname === '/settings';
+  const isHomePage = pathname === '/';
 
   return (
     <Stack
@@ -29,7 +30,7 @@ function RootLayoutNav() {
         },
         headerLeft: isSettingsPage ? () => (
           <TouchableOpacity
-            onPress={() => router.replace('/')}
+            onPress={() => router.back()}
             style={{ marginLeft: 15 }}
           >
             <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
@@ -43,6 +44,8 @@ function RootLayoutNav() {
             <Ionicons name="settings-outline" size={24} color={theme.colors.text} />
           </TouchableOpacity>
         ),
+        animation: 'slide_from_right',
+        presentation: 'card',
       }}
     />
   );
