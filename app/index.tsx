@@ -5,6 +5,7 @@ import { MMKV } from 'react-native-mmkv';
 import { v4 as uuidv4 } from 'uuid';
 import TotpConfigSheet, { TotpConfigForm } from './components/TotpConfigSheet';
 import TotpList, { TotpConfig } from './components/TotpList';
+import './polyfills';
 
 const storage = new MMKV({ id: 'totpStorage' });
 
@@ -49,7 +50,7 @@ const HomeScreen = () => {
   };
 
   const handleEditConfig = (configs: TotpConfig[]) => {
-    if (configs.length === 1) {
+    if (configs.length === 1 && !configs[0].hasOwnProperty('isRunning')) {
       setEditingConfig(configs[0]);
       setIsConfigSheetOpen(true);
     } else {

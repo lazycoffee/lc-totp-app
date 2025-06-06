@@ -1,5 +1,5 @@
 import { HashAlgorithms } from '@otplib/core';
-import { totp } from 'otplib';
+import { TOTP } from 'otpauth';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -35,13 +35,21 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
           const now = Date.now();
           const timeElapsed = now % (config.period * 1000);
           const progress = timeElapsed / (config.period * 1000);
-          totp.options = {
-            algorithm: config.algorithm as HashAlgorithms,
-            digits: config.digits,
-            step: config.period
-          };
-          const otp = totp.generate(config.secret);
-          return { ...config, otpCode: otp, progress };
+          try {
+            const totp = new TOTP({
+              algorithm: config.algorithm === HashAlgorithms.SHA1 ? 'SHA1' :
+                        config.algorithm === HashAlgorithms.SHA256 ? 'SHA256' :
+                        'SHA512',
+              digits: config.digits,
+              period: config.period,
+              secret: config.secret
+            });
+            const otp = totp.generate();
+            return { ...config, otpCode: otp, progress };
+          } catch (error) {
+            console.error('Error generating TOTP:', error);
+            return config;
+          }
         });
         onEditConfig(updatedConfigs);
       }, 1000);
@@ -57,15 +65,25 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
     };
   }, [configs]);
 
+  const handlePlayButtonPress = (item: TotpConfig) => {
+    const updatedConfigs = configs.map(c => 
+      c.id === item.id ? { ...c, isRunning: !c.isRunning } : c
+    );
+    onEditConfig(updatedConfigs);
+  };
+
   const renderItem = ({ item }: { item: TotpConfig }) => (
-    <TouchableOpacity style={styles.listItem} onPress={() => onEditConfig([item])}>
-      <Text style={styles.name}>{item.name}</Text>
+    <View style={styles.listItem}>
+      <TouchableOpacity 
+        style={styles.nameContainer}
+        onPress={() => onEditConfig([item])}
+      >
+        <Text style={styles.name}>{item.name}</Text>
+      </TouchableOpacity>
       <View style={styles.controls}>
         <Pressable
           style={[styles.actionBtn, item.isRunning ? styles.stopBtn : styles.playBtn]}
-          onPress={() => {
-            onEditConfig(configs.map(c => c.id === item.id ? { ...c, isRunning: !c.isRunning } : c));
-          }}
+          onPress={() => handlePlayButtonPress(item)}
         >
           <Text style={styles.actionText}>{item.isRunning ? '■' : '▶'}</Text>
         </Pressable>
@@ -77,7 +95,7 @@ const TotpList = ({ configs, onAddConfig, onEditConfig }: TotpListProps) => {
         height={4}
         style={styles.progress}
       />
-    </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -120,6 +138,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  nameContainer: {
+    flex: 1,
   },
   name: {
     flex: 1,
