@@ -16,8 +16,8 @@ export default function TotpConfigScreen() {
                      config.algorithm === HashAlgorithms.SHA256 ? 'SHA-256' :
                      'SHA-512';
     return {
-      preset: config.preset,
       name: config.name,
+      serviceProvider: config.serviceProvider,
       secret: config.secret,
       algorithm: algorithm as 'SHA-1' | 'SHA-256' | 'SHA-512',
       digits: config.digits,

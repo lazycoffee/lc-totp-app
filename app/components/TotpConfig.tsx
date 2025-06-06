@@ -1,21 +1,14 @@
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useThemeContext } from '../../src/contexts/ThemeContext';
 import { colors } from '../../src/services/theme';
-import { TotpDefaultConfigs } from '../../src/utils/totp_default_config';
+import { TotpConfigForm as TotpConfigFormType } from '../../src/types/totp';
 
-export interface TotpConfigForm {
-  name: string;
-  serviceProvider?: string;
-  secret: string;
-  algorithm: 'SHA-1' | 'SHA-256' | 'SHA-512';
-  digits: number;
-  period: number;
-}
+export interface TotpConfigForm extends TotpConfigFormType {}
 
 interface TotpConfigPageProps {
   initialValues?: Partial<TotpConfigForm>;
@@ -29,7 +22,7 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
   const safeInitialValues = initialValues ?? {};
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const { control, handleSubmit, watch, setValue } = useForm<TotpConfigForm>({
+  const { control, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm<TotpConfigForm>({
     defaultValues: {
       name: '',
       serviceProvider: '',
@@ -38,10 +31,18 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
       digits: 6,
       period: 30,
       ...safeInitialValues
-    }
+    },
+    mode: 'onChange'
   });
 
   const formValues = watch();
+
+  const onSubmit = (data: TotpConfigForm) => {
+    if (isValid) {
+      onSave(data);
+      router.back();
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? colors.dark.card : colors.light.card }]}>
@@ -54,7 +55,11 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
           <Controller
             control={control}
             name="name"
-            rules={{ required: t('totpConfig.name.required'), maxLength: { value: 60, message: t('totpConfig.name.maxLength') } }}
+            rules={{ 
+              required: t('totpConfig.name.required'), 
+              maxLength: { value: 60, message: t('totpConfig.name.maxLength') },
+              validate: value => value.trim().length > 0 || t('totpConfig.name.required')
+            }}
             render={({ field: { onChange, value, onBlur } }) => (
               <TextInput
                 placeholder={t('totpConfig.name.placeholder')}
@@ -72,35 +77,14 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
             )}
           />
 
-          <Text style={[styles.label, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>{t('totpConfig.serviceProvider.label')}</Text>
-          <Controller
-            control={control}
-            name="serviceProvider"
-            rules={{
-              maxLength: { value: 30, message: t('totpConfig.serviceProvider.maxLength') }
-            }}
-            render={({ field: { onChange, value, onBlur } }) => (
-              <TextInput
-                placeholder={t('totpConfig.serviceProvider.placeholder')}
-                placeholderTextColor={isDarkMode ? colors.dark.text + '80' : colors.light.text + '80'}
-                style={[styles.input, { 
-                  color: isDarkMode ? colors.dark.text : colors.light.text,
-                  backgroundColor: isDarkMode ? colors.dark.card : colors.light.card,
-                  borderColor: isDarkMode ? colors.dark.border : colors.light.border
-                }]}
-                maxLength={30}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value || ''}
-              />
-            )}
-          />
-
           <Text style={[styles.label, { color: isDarkMode ? colors.dark.text : colors.light.text }]}>{t('totpConfig.secret.label')}</Text>
           <Controller
             control={control}
             name="secret"
-            rules={{ required: t('totpConfig.secret.required') }}
+            rules={{ 
+              required: t('totpConfig.secret.required'),
+              validate: value => value.trim().length > 0 || t('totpConfig.secret.required')
+            }}
             render={({ field: { onChange, value, onBlur } }) => (
               <TextInput
                 placeholder={t('totpConfig.secret.placeholder')}
@@ -123,6 +107,7 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
               <Controller
                 control={control}
                 name="algorithm"
+                rules={{ required: t('totpConfig.algorithm.required') }}
                 render={({ field: { value, onChange } }) => (
                   <Picker
                     selectedValue={value}
@@ -144,7 +129,12 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
               <Controller
                 control={control}
                 name="digits"
-                rules={{ required: t('totpConfig.digits.required'), min: { value: 6, message: t('totpConfig.digits.min') }, max: { value: 12, message: t('totpConfig.digits.max') } }}
+                rules={{ 
+                  required: t('totpConfig.digits.required'), 
+                  min: { value: 6, message: t('totpConfig.digits.min') }, 
+                  max: { value: 12, message: t('totpConfig.digits.max') },
+                  validate: value => !isNaN(value) && value >= 6 && value <= 12 || t('totpConfig.digits.invalid')
+                }}
                 render={({ field: { onChange, value, onBlur } }) => (
                   <TextInput
                     placeholder="6"
@@ -155,7 +145,12 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
                       borderColor: isDarkMode ? colors.dark.border : colors.light.border
                     }]}
                     keyboardType="numeric"
-                    onChangeText={(text) => onChange(Number(text))}
+                    onChangeText={(text) => {
+                      const num = Number(text);
+                      if (!isNaN(num)) {
+                        onChange(num);
+                      }
+                    }}
                     onBlur={onBlur}
                     value={value?.toString()}
                   />
@@ -166,7 +161,11 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
               <Controller
                 control={control}
                 name="period"
-                rules={{ required: t('totpConfig.period.required'), min: { value: 1, message: t('totpConfig.period.min') } }}
+                rules={{ 
+                  required: t('totpConfig.period.required'), 
+                  min: { value: 1, message: t('totpConfig.period.min') },
+                  validate: value => !isNaN(value) && value >= 1 || t('totpConfig.period.invalid')
+                }}
                 render={({ field: { onChange, value, onBlur } }) => (
                   <TextInput
                     placeholder="30"
@@ -177,7 +176,12 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
                       borderColor: isDarkMode ? colors.dark.border : colors.light.border
                     }]}
                     keyboardType="numeric"
-                    onChangeText={(text) => onChange(Number(text))}
+                    onChangeText={(text) => {
+                      const num = Number(text);
+                      if (!isNaN(num)) {
+                        onChange(num);
+                      }
+                    }}
                     onBlur={onBlur}
                     value={value?.toString()}
                   />
@@ -185,10 +189,10 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
               />
             </>
           )}
-          {control._formState.errors.name && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{control._formState.errors.name.message}</Text>}
-          {control._formState.errors.secret && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{control._formState.errors.secret.message}</Text>}
-          {control._formState.errors.digits && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{control._formState.errors.digits.message}</Text>}
-          {control._formState.errors.period && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{control._formState.errors.period.message}</Text>}
+          {errors.name && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{errors.name.message}</Text>}
+          {errors.secret && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{errors.secret.message}</Text>}
+          {errors.digits && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{errors.digits.message}</Text>}
+          {errors.period && <Text style={[styles.error, { color: isDarkMode ? colors.dark.error : colors.light.error }]}>{errors.period.message}</Text>}
         </View>
       </ScrollView>
       <View style={[styles.footer, { borderTopColor: isDarkMode ? colors.dark.border : colors.light.border }]}>
@@ -205,8 +209,15 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
             </Text>
           </Pressable>
           <Pressable 
-            style={[styles.confirmBtn, { backgroundColor: isDarkMode ? colors.dark.primary : colors.light.primary }]} 
-            onPress={handleSubmit(onSave)}
+            style={[
+              styles.confirmBtn, 
+              { 
+                backgroundColor: isDarkMode ? colors.dark.primary : colors.light.primary,
+                opacity: isValid ? 1 : 0.5
+              }
+            ]} 
+            onPress={handleSubmit(onSubmit)}
+            disabled={!isValid}
           >
             <Text style={[styles.confirmText, { color: isDarkMode ? colors.dark.card : colors.light.card }]}>{t('totpConfig.confirm')}</Text>
           </Pressable>
@@ -250,49 +261,52 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
-    flexGrow: 1,
+    padding: 16,
   },
   content: {
-    padding: 16,
+    gap: 8,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   label: {
     fontSize: 16,
-    marginBottom: 8,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   input: {
-    height: 40,
-    borderWidth: 1,
+    height: 48,
     borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    fontSize: 16,
   },
   pickerInput: {
-    borderWidth: 1,
+    height: 48,
     borderRadius: 8,
-    marginBottom: 16,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    fontSize: 16,
   },
   error: {
-    color: 'red',
-    marginBottom: 16,
+    fontSize: 14,
+    marginTop: 4,
   },
   footer: {
     padding: 16,
     borderTopWidth: 1,
   },
   confirmBtn: {
+    flex: 1,
     height: 48,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '60%',
   },
   confirmText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });
 

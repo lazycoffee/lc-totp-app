@@ -36,14 +36,13 @@ const HomeScreen = () => {
     if (!editingConfigId) return undefined;
     const config = configs.find(c => c.id === editingConfigId);
     if (!config) return undefined;
-    const algorithm = config.algorithm === HashAlgorithms.SHA1 ? 'SHA-1' :
-                     config.algorithm === HashAlgorithms.SHA256 ? 'SHA-256' :
-                     'SHA-512';
     return {
-      preset: config.preset,
       name: config.name,
+      serviceProvider: config.serviceProvider,
       secret: config.secret,
-      algorithm: algorithm as 'SHA-1' | 'SHA-256' | 'SHA-512',
+      algorithm: config.algorithm === HashAlgorithms.SHA1 ? 'SHA-1' :
+                 config.algorithm === HashAlgorithms.SHA256 ? 'SHA-256' :
+                 'SHA-512',
       digits: config.digits,
       period: config.period
     };

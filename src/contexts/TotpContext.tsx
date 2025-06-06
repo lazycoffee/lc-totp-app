@@ -26,7 +26,6 @@ const formToConfig = (form: TotpConfigForm, id: string): TotpConfig => ({
 
 const entryToConfig = (entry: TOTPEntry): TotpConfig => ({
   id: entry.id,
-  preset: 'Other',
   name: entry.name,
   secret: entry.secret,
   algorithm: entry.algorithm === 'SHA1' ? HashAlgorithms.SHA1 :

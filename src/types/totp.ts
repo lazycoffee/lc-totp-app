@@ -1,10 +1,8 @@
 import { HashAlgorithms } from '@otplib/core';
 
-export type TotpPreset = 'Google' | 'Microsoft' | 'GitHub' | 'Other';
-
 export interface TotpConfigForm {
-  preset: TotpPreset;
   name: string;
+  serviceProvider?: string;
   secret: string;
   algorithm: 'SHA-1' | 'SHA-256' | 'SHA-512';
   digits: number;
