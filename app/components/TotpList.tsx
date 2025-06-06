@@ -86,8 +86,9 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
       </View>
       <Progress.Bar
         progress={item.progress ?? 0}
+        borderWidth={0}
+        unfilledColor="rgba(0, 0, 0, 0.1)"
         width={null}
-        height={4}
         style={styles.progress}
       />
     </View>
