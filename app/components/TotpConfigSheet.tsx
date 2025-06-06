@@ -26,7 +26,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
   const { t } = useTranslation();
   const safeInitialValues = initialValues ?? {};
 
-  // Add bottom sheet configuration
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['100%'], []);
 
@@ -36,7 +35,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
     }
   }, [onClose]);
 
-  // Show/hide bottom sheet based on isOpen prop
   useEffect(() => {
     if (isOpen) {
       bottomSheetRef.current?.present();
@@ -87,7 +85,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
           </Pressable>
         </View>
         <View style={styles.content}>
-          {/* 预设配置下拉框 */}
           <Text style={styles.label}>{t('totpConfig.preset')}</Text>
           <Picker
             selectedValue={formValues.preset}
@@ -100,7 +97,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
             <Picker.Item label={t('totpConfig.preset')} value="Other" />
           </Picker>
 
-          {/* 配置名称输入框 */}
           <Text style={styles.label}>{t('totpConfig.name.label')}</Text>
           <Controller
             control={control}
@@ -118,7 +114,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
             )}
           />
 
-          {/* 密钥输入框 */}
           <Text style={styles.label}>{t('totpConfig.secret.label')}</Text>
           <Controller
             control={control}
@@ -135,7 +130,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
             )}
           />
 
-          {/* 算法下拉框 */}
           <Text style={styles.label}>{t('totpConfig.algorithm')}</Text>
           <Picker
             selectedValue={formValues.algorithm}
@@ -147,7 +141,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
             <Picker.Item label="SHA-512" value="SHA-512" />
           </Picker>
 
-          {/* OPT位数输入框 */}
           <Text style={styles.label}>{t('totpConfig.digits.label')}</Text>
           <Controller
             control={control}
@@ -165,7 +158,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
             )}
           />
 
-          {/* 时间窗口输入框 */}
           <Text style={styles.label}>{t('totpConfig.period.label')}</Text>
           <Controller
             control={control}
@@ -182,7 +174,6 @@ const TotpConfigSheet = ({ isOpen, onClose, initialValues, onSave }: TotpConfigS
               />
             )}
           />
-          {/* 添加表单验证错误提示 */}
           {control._formState.errors.name && <Text style={styles.error}>{control._formState.errors.name.message}</Text>}
           {control._formState.errors.secret && <Text style={styles.error}>{control._formState.errors.secret.message}</Text>}
           {control._formState.errors.digits && <Text style={styles.error}>{control._formState.errors.digits.message}</Text>}
@@ -248,24 +239,24 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 4,
     padding: 8,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   error: {
     color: 'red',
     fontSize: 12,
-    marginBottom: 8,
+    marginTop: -12,
+    marginBottom: 16,
   },
   confirmBtn: {
     backgroundColor: '#007AFF',
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 16,
   },
   confirmText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 });
 
