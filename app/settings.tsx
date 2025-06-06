@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLanguageContext } from '../src/contexts/LanguageContext';
@@ -9,9 +9,25 @@ type ThemeType = 'light' | 'dark' | 'system';
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme, setTheme } = useThemeContext();
   const { language, setLanguage } = useLanguageContext();
+
+  useEffect(() => {
+    console.log('Current language:', i18n.language);
+    console.log('Available resources:', i18n.options.resources);
+    console.log('Theme translations:', {
+      title: t('settings.theme.title'),
+      system: t('settings.theme.system'),
+      light: t('settings.theme.light'),
+      dark: t('settings.theme.dark'),
+    });
+    console.log('Language translations:', {
+      title: t('settings.language.title'),
+      en: t('settings.language.en'),
+      zh: t('settings.language.zh'),
+    });
+  }, [i18n.language, t]);
 
   const themeOptions: { value: ThemeType; label: string }[] = [
     { value: 'system', label: t('settings.theme.system') },
@@ -20,8 +36,8 @@ export default function SettingsScreen() {
   ];
 
   const languageOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'zh', label: '中文' },
+    { value: 'en', label: t('settings.language.en') },
+    { value: 'zh', label: t('settings.language.zh') },
   ];
 
   return (

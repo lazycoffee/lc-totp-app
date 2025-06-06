@@ -1,32 +1,59 @@
-# TOTP 应用交互设计文档
+# TOTP App Interaction Design Document
 
-## 一、TOTP 配置页面（Bottom Sheet）
-- **触发方式**：点击首页右下角加号按钮/点击列表项
-- **布局结构**：
-  - 标题："TOTP配置"（顶部居中）
-  - 预设配置下拉框（选项：Google/Microsoft/GitHub/其他）
-  - 配置名称输入框（placeholder: "例如：Github 张三"，最大60字符）
-  - 密钥输入框（必填，无格式限制）
-  - 算法下拉框（选项：SHA-1/SHA-256/SHA-512，默认SHA-1）
-  - OPT位数输入框（数字输入，6-12位，默认6）
-  - 时间窗口输入框（数字输入，正整数，默认30秒）
-  - 确定按钮（底部固定，点击验证表单并保存）
-- **验证规则**：
-  - 配置名称必填且≤60字符
-  - 密钥必填
-  - 位数6-12位
-  - 时间窗口≥1秒
+## I. TOTP Configuration Page (Full Screen with Bottom Sheet Interaction)
+- **Trigger Method**: Click the plus button in the bottom right corner of the home page / Click on a list item
+- **Display Mode**: Full screen modal that slides up from the bottom
+- **Layout Structure**:
+  - Title Bar: "TOTP Configuration" (centered at top) with close button
+  - Content Area (scrollable):
+    - Preset Configuration Dropdown (Options: Google/Microsoft/GitHub/Other)
+    - Configuration Name Input Field (placeholder: "e.g., Github John", max 60 characters)
+    - Secret Key Input Field (required, no format restrictions)
+    - Algorithm Dropdown (Options: SHA-1/SHA-256/SHA-512, default SHA-1)
+    - OTP Digits Input Field (numeric input, 6-12 digits, default 6)
+    - Time Window Input Field (numeric input, positive integer, default 30 seconds)
+  - Bottom Action Bar (fixed):
+    - Confirm Button (validates form and saves on click)
+- **Interaction Behavior**:
+  - Slides up from bottom on open
+  - Can be dismissed by:
+    - Swiping down
+    - Tapping close button
+    - Tapping outside the modal
+- **Validation Rules**:
+  - Configuration name is required and ≤ 60 characters
+  - Secret key is required
+  - Digits must be 6-12
+  - Time window must be ≥ 1 second
 
-## 二、TOTP 列表页面（首页）
-- **列表项结构**：
-  - 左侧：配置名称（主文字）
-  - 右侧：运算按钮（播放/停止图标）+ OTP结果（运行时显示）
-  - 底部：剩余时间进度条（随时间动态更新）
-- **交互行为**：
-  - 点击列表项：打开配置页面（填充当前配置信息）
-  - 点击运算按钮：切换运行状态（播放→停止时显示OTP，停止→播放时隐藏）
-  - 右下角加号按钮：固定定位，点击打开新增配置页面
+## II. TOTP List Page (Home Page)
+- **List Item Structure**:
+  - Left: Configuration Name (primary text)
+  - Right: Operation Button (play/stop icon) + OTP Result (displayed during runtime)
+  - Bottom: Remaining Time Progress Bar (updates dynamically)
+- **Interaction Behavior**:
+  - Click list item: Opens configuration page (populated with current configuration)
+  - Click operation button: Toggles running state (play→stop shows OTP, stop→play hides)
+  - Bottom right plus button: Fixed position, click to open new configuration page
 
-## 三、多语言支持
-- 支持中文/英文切换（后续可扩展）
-- 关键文案：配置页面标题、输入框placeholder、按钮文本等均实现双语映射
+## III. Multi-language Support
+- Supports Chinese/English switching (expandable in the future)
+- Key text elements: Configuration page title, input field placeholders, button text, etc. all support bilingual mapping
+
+## IV. Settings Page
+- **Access Method**: Click the settings icon in the top right corner of the navigation bar
+- **Feature Options**:
+  - Theme Switching (System/Light/Dark)
+  - Language Switching (Chinese/English)
+- **Layout Structure**:
+  - Theme Settings Section
+    - Title: "Theme Settings"
+    - Option Buttons: System/Light/Dark
+  - Language Settings Section
+    - Title: "Language Settings"
+    - Option Buttons: Chinese/English
+- **Interaction Behavior**:
+  - Click option buttons for immediate effect
+  - Settings are automatically saved
+  - Theme changes are previewed in real-time
+  - Language changes require app restart

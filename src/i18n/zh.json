@@ -36,5 +36,18 @@
       "title": "暂无TOTP配置",
       "subtitle": "点击 + 按钮添加"
     }
+  },
+  "settings": {
+    "theme": {
+      "title": "主题",
+      "system": "跟随系统",
+      "light": "浅色",
+      "dark": "深色"
+    },
+    "language": {
+      "title": "语言",
+      "en": "English",
+      "zh": "中文"
+    }
   }
 }

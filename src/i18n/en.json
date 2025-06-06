@@ -36,5 +36,18 @@
       "title": "No TOTP configurations yet",
       "subtitle": "Tap the + button to add one"
     }
+  },
+  "settings": {
+    "theme": {
+      "title": "Theme",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": {
+      "title": "Language",
+      "en": "English",
+      "zh": "中文"
+    }
   }
 }
