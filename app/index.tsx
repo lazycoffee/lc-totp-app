@@ -2,10 +2,10 @@ import { HashAlgorithms } from '@otplib/core';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
+import '../lib/polyfills';
 import { useTotp } from '../src/contexts/TotpContext';
 import { TotpConfig, TotpConfigForm } from '../src/types/totp';
 import TotpList from './components/TotpList';
-import './polyfills';
 
 const HomeScreen = () => {
   const { configs, addConfig, updateConfig, isLoading, error } = useTotp();
