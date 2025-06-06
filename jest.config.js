@@ -16,6 +16,7 @@ module.exports = {
     '^@assets/(.*)$': '<rootDir>/src/assets/$1',
     '^@styles/(.*)$': '<rootDir>/src/styles/$1'
   },
+  testEnvironment: 'jsdom',
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

@@ -1,53 +1,16 @@
-import { HashAlgorithms } from '@otplib/core';
-import { authenticator } from 'otplib';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { APP_CONSTANTS } from '../constants/index';
-import type { TOTPEntry } from '../types';
+import { generateTOTP as generateTOTPCode, verifyTOTP as verifyTOTPCode } from '../services/totpService';
 
-export const useTOTP = (entry: TOTPEntry) => {
-  const [code, setCode] = useState<string>('');
-  const [timeLeft, setTimeLeft] = useState<number>(0);
+export const useTOTP = () => {
+  const generateTOTP = (secret: string): string => {
+    return generateTOTPCode(secret);
+  };
 
-  const generateTOTP = useCallback(() => {
-    try {
-      authenticator.options = {
-        algorithm: entry.algorithm === 'SHA1' ? HashAlgorithms.SHA1 :
-          entry.algorithm === 'SHA256' ? HashAlgorithms.SHA256 :
-            HashAlgorithms.SHA512,
-        digits: entry.digits || APP_CONSTANTS.TOTP_DEFAULTS.digits,
-        period: entry.period || APP_CONSTANTS.TOTP_DEFAULTS.period
-      };
-      const token = authenticator.generate(entry.secret);
-      setCode(token);
-    } catch (error) {
-      console.error('Error generating TOTP:', error);
-      setCode('');
-    }
-  }, [entry]);
-
-  const period = useMemo(
-    () => entry.period || APP_CONSTANTS.TOTP_DEFAULTS.period,
-    [entry.period]
-  );
-
-  useEffect(() => {
-    generateTOTP();
-    const interval = setInterval(() => {
-      const now = Math.floor(Date.now() / 1000);
-      const timeLeft = period - (now % period);
-      setTimeLeft(timeLeft);
-      if (timeLeft === period) {
-        generateTOTP();
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [generateTOTP, period]);
+  const verifyTOTP = (secret: string, token: string): boolean => {
+    return verifyTOTPCode(secret, token);
+  };
 
   return {
-    code,
-    timeLeft,
-    period,
-    progress: ((period - timeLeft) / period) * 100
+    generateTOTP,
+    verifyTOTP,
   };
 }; 

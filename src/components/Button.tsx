@@ -1,4 +1,3 @@
-import { colors, spacing, typography } from '@services/theme';
 import React from 'react';
 import {
     ActivityIndicator,
@@ -6,123 +5,65 @@ import {
     Text,
     TextStyle,
     TouchableOpacity,
-    TouchableOpacityProps,
-    ViewStyle
+    ViewStyle,
 } from 'react-native';
+import { colors, spacing, typography } from '../services/theme';
 
-interface ButtonProps extends TouchableOpacityProps {
-  title: string;
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'small' | 'medium' | 'large';
-  loading?: boolean;
-  disabled?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+interface ButtonProps {
+    title: string;
+    onPress: () => void;
+    disabled?: boolean;
+    loading?: boolean;
+    style?: ViewStyle;
+    textStyle?: TextStyle;
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  title,
-  variant = 'primary',
-  size = 'medium',
-  loading = false,
-  disabled = false,
-  style,
-  textStyle,
-  ...props
+    title,
+    onPress,
+    disabled = false,
+    loading = false,
+    style,
+    textStyle,
 }) => {
-  const getButtonStyle = () => {
-    const baseStyle = styles.button;
-    const variantStyle = styles[variant];
-    const sizeStyle = styles[size];
-    const disabledStyle = disabled ? styles.disabled : {};
-
-    return [baseStyle, variantStyle, sizeStyle, disabledStyle, style];
-  };
-
-  const getTextStyle = () => {
-    const baseStyle = styles.text;
-    const variantTextStyle = styles[`${variant}Text`];
-    const sizeTextStyle = styles[`${size}Text`];
-    const disabledTextStyle = disabled ? styles.disabledText : {};
-
-    return [baseStyle, variantTextStyle, sizeTextStyle, disabledTextStyle, textStyle];
-  };
-
-  return (
-    <TouchableOpacity
-      style={getButtonStyle()}
-      disabled={disabled || loading}
-      activeOpacity={0.7}
-      {...props}
-    >
-      {loading ? (
-        <ActivityIndicator
-          color={variant === 'outline' ? colors.light.primary : colors.light.background}
-          size="small"
-        />
-      ) : (
-        <Text style={getTextStyle()}>{title}</Text>
-      )}
-    </TouchableOpacity>
-  );
+    const isDisabled = disabled || loading;
+    
+    return (
+        <TouchableOpacity
+            style={[
+                styles.button,
+                isDisabled && styles.buttonDisabled,
+                style,
+            ]}
+            onPress={onPress}
+            disabled={isDisabled}
+            testID="button"
+        >
+            {loading ? (
+                <ActivityIndicator testID="loading-indicator" color={colors.light.background} />
+            ) : (
+                <Text style={[styles.text, textStyle]}>{title}</Text>
+            )}
+        </TouchableOpacity>
+    );
 };
 
 const styles = StyleSheet.create({
-  button: {
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row'
-  },
-  primary: {
-    backgroundColor: colors.light.primary
-  },
-  secondary: {
-    backgroundColor: colors.light.card
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.light.primary
-  },
-  small: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md
-  },
-  medium: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg
-  },
-  large: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl
-  },
-  disabled: {
-    opacity: 0.5
-  },
-  text: {
-    fontFamily: typography.fontFamily.medium,
-    textAlign: 'center'
-  },
-  primaryText: {
-    color: colors.light.background
-  },
-  secondaryText: {
-    color: colors.light.text
-  },
-  outlineText: {
-    color: colors.light.primary
-  },
-  smallText: {
-    fontSize: typography.fontSize.sm
-  },
-  mediumText: {
-    fontSize: typography.fontSize.md
-  },
-  largeText: {
-    fontSize: typography.fontSize.lg
-  },
-  disabledText: {
-    opacity: 0.5
-  }
+    button: {
+        backgroundColor: colors.light.primary,
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.lg,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttonDisabled: {
+        backgroundColor: colors.light.border,
+        opacity: 0.7,
+    },
+    text: {
+        color: colors.light.background,
+        fontSize: typography.fontSize.md,
+        fontWeight: '600',
+    },
 }); 
