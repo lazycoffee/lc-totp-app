@@ -23,7 +23,7 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
           if (!config.isRunning) return config;
           const now = Date.now();
           const timeElapsed = now % (config.period * 1000);
-          const progress = timeElapsed / (config.period * 1000);
+          const progress = 1 - (timeElapsed / (config.period * 1000));
           try {
             const totp = new TOTP({
               algorithm: config.algorithm === HashAlgorithms.SHA1 ? 'SHA1' :
@@ -76,13 +76,13 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
         <Text style={styles.name}>{item.name}</Text>
       </TouchableOpacity>
       <View style={styles.controls}>
+        {item.otpCode && <Text style={styles.otpCode}>{item.otpCode}</Text>}
         <Pressable
           style={[styles.actionBtn, item.isRunning ? styles.stopBtn : styles.playBtn]}
           onPress={() => handlePlayButtonPress(item)}
         >
           <Text style={styles.actionText}>{item.isRunning ? '■' : '▶'}</Text>
         </Pressable>
-        {item.otpCode && <Text style={styles.otpCode}>{item.otpCode}</Text>}
       </View>
       <Progress.Bar
         progress={item.progress ?? 0}
