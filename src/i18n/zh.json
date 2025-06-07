@@ -30,7 +30,8 @@
       "min": "最小1秒"
     },
     "confirm": "确定",
-    "more": "更多"
+    "more": "更多",
+    "delete": "删除"
   },
   "totpList": {
     "add": "添加配置",

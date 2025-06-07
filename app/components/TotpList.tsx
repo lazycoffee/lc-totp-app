@@ -101,13 +101,6 @@ const TotpList = ({ onAddConfig }: TotpListProps) => {
         >
           <Text style={styles.actionText}>{item.isRunning ? '■' : '▶'}</Text>
         </Pressable>
-        <Pressable
-          style={[styles.actionBtn, styles.deleteBtn]}
-          onPress={() => handleDeletePress(item)}
-          testID="delete-totp-button"
-        >
-          <Text style={styles.actionText}>×</Text>
-        </Pressable>
       </View>
       <Progress.Bar
         progress={item.progress ?? 0}

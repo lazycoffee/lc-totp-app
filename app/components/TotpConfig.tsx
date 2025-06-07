@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useThemeContext } from '../../src/contexts/ThemeContext';
+import { useTotp } from '../../src/contexts/TotpContext';
 import { colors } from '../../src/services/theme';
 import { TotpConfigForm as TotpConfigFormType } from '../../src/types/totp';
 
@@ -13,11 +14,13 @@ export interface TotpConfigForm extends TotpConfigFormType {}
 interface TotpConfigPageProps {
   initialValues?: Partial<TotpConfigForm>;
   onSave: (newConfig: TotpConfigForm) => void;
+  configId?: string;
 }
 
-const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
+const TotpConfigPage = ({ initialValues, onSave, configId }: TotpConfigPageProps) => {
   const { t } = useTranslation();
   const { isDarkMode } = useThemeContext();
+  const { deleteConfig } = useTotp();
   const router = useRouter();
   const safeInitialValues = initialValues ?? {};
 
@@ -41,6 +44,24 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
     if (isValid) {
       onSave(data);
       router.back();
+    }
+  };
+
+  const handleDelete = () => {
+    if (!configId) return;
+    
+    const confirmed = window.confirm(
+      t('totpList.delete.message')
+    );
+    
+    if (confirmed) {
+      try {
+        deleteConfig(configId);
+        router.back();
+      } catch (error) {
+        console.error('Error deleting TOTP:', error);
+        window.alert(t('totpList.delete.error'));
+      }
     }
   };
 
@@ -222,6 +243,18 @@ const TotpConfigPage = ({ initialValues, onSave }: TotpConfigPageProps) => {
             <Text style={[styles.confirmText, { color: isDarkMode ? colors.dark.card : colors.light.card }]}>{t('totpConfig.confirm')}</Text>
           </Pressable>
         </View>
+        {configId && (
+          <Pressable 
+            style={[styles.deleteBtn, { 
+              backgroundColor: isDarkMode ? colors.dark.error + 'CC' : colors.light.error + 'CC',
+              marginTop: 12
+            }]} 
+            onPress={handleDelete}
+            testID="delete-totp-button"
+          >
+            <Text style={[styles.deleteText, { color: isDarkMode ? colors.dark.card : colors.light.card }]}>{t('totpConfig.delete')}</Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -305,6 +338,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   confirmText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  deleteBtn: {
+    height: 48,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteText: {
     fontSize: 16,
     fontWeight: '500',
   },

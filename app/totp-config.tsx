@@ -41,7 +41,7 @@ export default function TotpConfigScreen() {
           presentation: 'card',
         }}
       />
-      <TotpConfigPage onSave={handleSave} initialValues={getInitialValues()} />
+      <TotpConfigPage onSave={handleSave} initialValues={getInitialValues()} configId={id} />
     </>
   );
 } 

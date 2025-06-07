@@ -30,7 +30,8 @@
       "min": "Minimum 1 second"
     },
     "confirm": "Confirm",
-    "more": "More"
+    "more": "More",
+    "delete": "Delete"
   },
   "totpList": {
     "add": "Add Config",
