@@ -61,6 +61,7 @@
     },
     "language": {
       "title": "Language",
+      "system": "Follow System",
       "en": "English",
       "zh": "中文"
     }

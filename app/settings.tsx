@@ -6,6 +6,7 @@ import { useThemeContext } from '../src/contexts/ThemeContext';
 import { colors } from '../src/services/theme';
 
 type ThemeType = 'light' | 'dark' | 'system';
+type LanguageType = 'en' | 'zh' | 'system';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -18,7 +19,8 @@ export default function SettingsScreen() {
     { value: 'dark', label: t('settings.theme.dark') },
   ];
 
-  const languageOptions = [
+  const languageOptions: { value: LanguageType; label: string }[] = [
+    { value: 'system', label: t('settings.language.system') },
     { value: 'en', label: t('settings.language.en') },
     { value: 'zh', label: t('settings.language.zh') },
   ];
@@ -78,7 +80,7 @@ export default function SettingsScreen() {
                 borderWidth: 1,
               },
             ]}
-            onPress={() => setLanguage(option.value as 'en' | 'zh')}
+            onPress={() => setLanguage(option.value)}
           >
             <Text
               style={[
